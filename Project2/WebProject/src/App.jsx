@@ -9,56 +9,51 @@ const lessons = {
       word: "こんにちは",
       correct: "Hello",
       question: "What does this mean?",
-      options: ["Hello", "Goodbye", "Water", "Food"],
+      
       sentence: "こんにちは、元気ですか？",
     },
     {
       word: "おはよう",
       correct: "Good Morning",
       question: "Choose the correct greeting",
-      options: ["Good Night", "Good Morning", "Thank You", "Sorry"],
+      
       sentence: "おはようございます！",
     },
     {
       word: "こんばんは",
       correct: "Good Evening",
       question: "Translate this greeting",
-      options: ["Good Evening", "Goodbye", "Welcome", "See You"],
+      
       sentence: "こんばんは、今日はどうですか？",
     },
     {
       word: "ありがとう",
       correct: "Thank You",
       question: "What does this phrase mean?",
-      options: ["Please", "Sorry", "Thank You", "Excuse Me"],
       sentence: "助けてくれてありがとう。",
     },
     {
       word: "すみません",
       correct: "Excuse Me",
       question: "Choose the correct meaning",
-      options: ["Excuse Me", "Goodbye", "Welcome", "Friend"],
       sentence: "すみません、駅はどこですか？",
     },
     {
       word: "水",
       correct: "Water",
       question: "Choose the correct meaning",
-      options: ["Fire", "Water", "Rice", "Book"],
       sentence: "私は水を飲みます。",
     },
     {
       word: "猫",
       correct: "Cat",
       question: "What animal is this?",
-      options: ["Dog", "Bird", "Cat", "Fish"],
       sentence: "猫が好きです。",
     },
     {
       word: "友達",
       correct: "Friend",
       question: "Translate this word",
-      options: ["Teacher", "Friend", "Student", "Brother"],
       sentence: "彼は私の友達です。",
     },
   ],
@@ -68,56 +63,48 @@ const lessons = {
       word: "Hola",
       correct: "Hello",
       question: "What does this mean?",
-      options: ["Hello", "Water", "Food", "Car"],
       sentence: "Hola amigo",
     },
     {
       word: "Buenos días",
       correct: "Good Morning",
       question: "Translate this greeting",
-      options: ["Good Night", "Good Morning", "Thank You", "Please"],
       sentence: "Buenos días, ¿cómo estás?",
     },
     {
       word: "Buenas noches",
       correct: "Good Night",
       question: "Choose the correct meaning",
-      options: ["Goodbye", "Good Night", "Good Afternoon", "Welcome"],
       sentence: "Buenas noches, hasta mañana.",
     },
     {
       word: "Gracias",
       correct: "Thank You",
       question: "Translate this word",
-      options: ["Please", "Thank You", "Sorry", "Friend"],
       sentence: "Muchas gracias por tu ayuda.",
     },
     {
       word: "Perdón",
       correct: "Sorry",
       question: "Choose the correct answer",
-      options: ["Hello", "Friend", "Sorry", "Book"],
       sentence: "Perdón por llegar tarde.",
     },
     {
       word: "Agua",
       correct: "Water",
       question: "Choose the correct meaning",
-      options: ["Milk", "Rice", "Water", "Book"],
       sentence: "Necesito agua.",
     },
     {
       word: "Gato",
       correct: "Cat",
       question: "Which animal is this?",
-      options: ["Bird", "Fish", "Dog", "Cat"],
       sentence: "El gato duerme.",
     },
     {
       word: "Amigo",
       correct: "Friend",
       question: "Translate this word",
-      options: ["Teacher", "Friend", "Brother", "Student"],
       sentence: "Él es mi mejor amigo.",
     },
   ],
@@ -127,56 +114,48 @@ const lessons = {
       word: "Bonjour",
       correct: "Hello",
       question: "Translate this word",
-      options: ["Goodbye", "Hello", "Water", "Food"],
       sentence: "Bonjour mon ami",
     },
     {
       word: "Bonsoir",
       correct: "Good Evening",
       question: "Choose the correct greeting",
-      options: ["Good Morning", "Good Evening", "Goodbye", "Please"],
       sentence: "Bonsoir, comment allez-vous ?",
     },
     {
       word: "Merci",
       correct: "Thank You",
       question: "Translate this word",
-      options: ["Sorry", "Please", "Thank You", "Friend"],
       sentence: "Merci beaucoup pour votre aide.",
     },
     {
       word: "S'il vous plaît",
       correct: "Please",
       question: "What does this phrase mean?",
-      options: ["Please", "Sorry", "Goodbye", "Water"],
       sentence: "Un café, s'il vous plaît.",
     },
     {
       word: "Pardon",
       correct: "Sorry",
       question: "Choose the correct answer",
-      options: ["Teacher", "Sorry", "Student", "Friend"],
       sentence: "Pardon pour le retard.",
     },
     {
       word: "Eau",
       correct: "Water",
       question: "Choose the correct answer",
-      options: ["Water", "Milk", "Rice", "Tea"],
       sentence: "Je bois de l'eau.",
     },
     {
       word: "Chat",
       correct: "Cat",
       question: "Which animal is this?",
-      options: ["Dog", "Cat", "Fish", "Horse"],
       sentence: "Le chat est mignon.",
     },
     {
       word: "Ami",
       correct: "Friend",
       question: "Translate this word",
-      options: ["Teacher", "Brother", "Friend", "Student"],
       sentence: "Il est mon meilleur ami.",
     },
   ],
@@ -228,6 +207,37 @@ const lessons = {
     currentLessons[
       questionIndex % currentLessons.length
     ];
+  const generateOptions = () => {
+  // Get all possible answers
+  const allAnswers = currentLessons.map(
+    (lesson) => lesson.correct
+  );
+
+  // Remove correct answer
+  const wrongAnswers = allAnswers.filter(
+    (answer) => answer !== currentLesson.correct
+  );
+
+  // Shuffle wrong answers
+  const shuffledWrong = wrongAnswers.sort(
+    () => Math.random() - 0.5
+  );
+
+  // Pick first 3 wrong answers
+  const selectedWrong = shuffledWrong.slice(0, 3);
+
+  // Combine with correct answer
+  const finalOptions = [
+    currentLesson.correct,
+    ...selectedWrong,
+  ];
+
+  // Shuffle again
+  return finalOptions.sort(
+    () => Math.random() - 0.5
+  );
+};
+
 
   /* ========================= SPEECH ========================= */
 
@@ -299,47 +309,74 @@ const lessons = {
   /* ========================= MEMORY GAME ========================= */
 
   const generateMemoryQuestion = () => {
-    const lesson =
-      lessons[selectedLanguage][
-        Math.floor(
-          Math.random() *
-            lessons[selectedLanguage].length
-        )
-      ];
+  const lesson =
+    lessons[selectedLanguage][
+      Math.floor(
+        Math.random() *
+          lessons[selectedLanguage].length
+      )
+    ];
 
-    const shuffled = [...lesson.options].sort(
-      () => Math.random() - 0.5
+  const allAnswers =
+    lessons[selectedLanguage].map(
+      (item) => item.correct
     );
 
-    setMemoryQuestion({
-      word: lesson.word,
-      correct: lesson.correct,
-      options: shuffled,
-    });
-  };
+  const wrongAnswers = allAnswers.filter(
+    (answer) => answer !== lesson.correct
+  );
+
+  const shuffledWrong = [...wrongAnswers].sort(
+    () => Math.random() - 0.5
+  );
+
+  const options = [
+    lesson.correct,
+    ...shuffledWrong.slice(0, 3),
+  ].sort(() => Math.random() - 0.5);
+
+  setMemoryQuestion({
+    word: lesson.word,
+    correct: lesson.correct,
+    options,
+  });
+};
 
   /* ========================= LISTENING GAME ========================= */
 
   const generateListeningQuestion = () => {
-    const lesson =
-      lessons[selectedLanguage][
-        Math.floor(
-          Math.random() *
-            lessons[selectedLanguage].length
-        )
-      ];
+  const lesson =
+    lessons[selectedLanguage][
+      Math.floor(
+        Math.random() *
+          lessons[selectedLanguage].length
+      )
+    ];
 
-    const shuffled = [...lesson.options].sort(
-      () => Math.random() - 0.5
+  const allAnswers =
+    lessons[selectedLanguage].map(
+      (item) => item.correct
     );
 
-    setListeningQuestion({
-      word: lesson.word,
-      correct: lesson.correct,
-      options: shuffled,
-    });
-  };
+  const wrongAnswers = allAnswers.filter(
+    (answer) => answer !== lesson.correct
+  );
 
+  const shuffledWrong = [...wrongAnswers].sort(
+    () => Math.random() - 0.5
+  );
+
+  const options = [
+    lesson.correct,
+    ...shuffledWrong.slice(0, 3),
+  ].sort(() => Math.random() - 0.5);
+
+  setListeningQuestion({
+    word: lesson.word,
+    correct: lesson.correct,
+    options,
+  });
+};
   /* ========================= SPEAKING ========================= */
 
   const startSpeechRecognition = () => {
@@ -423,9 +460,16 @@ const lessons = {
           <Grid>
             {memoryQuestion?.options.map((option) => (
               <OptionButton
-                key={option}
+                 key={option}
                 darkMode={darkMode}
+                selected={
+                  selectedAnswer === option
+                }
+                correct={
+                  option === memoryQuestion.correct
+               }
                 onClick={() => {
+                 setSelectedAnswer(option);
                   if (
                     option ===
                     memoryQuestion.correct
@@ -473,7 +517,7 @@ const lessons = {
           </h1>
 
           <Grid>
-            {currentLesson.options.map((option) => (
+            {generateOptions().map((option) => (
               <OptionButton
                 key={option}
                 darkMode={darkMode}
@@ -609,17 +653,22 @@ const lessons = {
     );
   }
 
+  
   /* ========================= MAIN APP ========================= */
-
+  
   return (
     <div
       style={{
         minHeight: "100vh",
         background: darkMode
   ? "#111827"
-  : "linear-gradient(180deg,#f9fafb,#eef2ff)",
-        color: darkMode ? "white" : "black",
+  : "linear-gradient(180deg,#ffffff,#dbeafe)",
+        color: darkMode ? "white" : "#111827",
+        boxShadow: darkMode
+  ? "none"
+  : "0 8px 20px rgba(0,0,0,0.08)",
       }}
+      
     >
       {/* HEADER */}
 
@@ -801,7 +850,7 @@ const lessons = {
             </h2>
 
             <Grid>
-              {currentLesson.options.map(
+              {generateOptions().map(
                 (option) => (
                   <button
                     key={option}
@@ -823,7 +872,7 @@ const lessons = {
                             : "#ef4444"
                           : darkMode
                           ? "#111827"
-                          : "#e5e7eb",
+                          : "#d1d5db",
                       color:
                         selectedAnswer === option
                           ? "white"
@@ -1022,7 +1071,25 @@ function OptionButton({
   children,
   onClick,
   darkMode,
+  selected,
+  correct,
 }) {
+  let background = darkMode
+    ? "#111827"
+    : "#e5e7eb";
+
+  let color = darkMode
+    ? "white"
+    : "black";
+
+  if (selected) {
+    background = correct
+      ? "#58cc02"
+      : "#ef4444";
+
+    color = "white";
+  }
+
   return (
     <button
       onClick={onClick}
@@ -1033,10 +1100,9 @@ function OptionButton({
         cursor: "pointer",
         fontWeight: "bold",
         fontSize: 18,
-        background: darkMode
-          ? "#111827"
-          : "#e5e7eb",
-        color: darkMode ? "white" : "black",
+        background,
+        color,
+        transition: "0.2s",
       }}
     >
       {children}
@@ -1051,12 +1117,29 @@ function SidebarButton({ children, onClick }) {
       style={{
         width: "100%",
         border: "none",
-        padding: 18,
-        borderRadius: 18,
+        padding: "18px 20px",
+        borderRadius: 20,
         cursor: "pointer",
         fontWeight: "bold",
         marginBottom: 16,
         fontSize: 18,
+        background:
+          "linear-gradient(135deg,#ffffff,#f3f4f6)",
+        color: "#111827",
+        boxShadow: "0 6px 15px rgba(0,0,0,0.15)",
+        transition: "0.3s",
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.transform = "scale(1.03)";
+        e.target.style.background =
+          "linear-gradient(135deg,#58cc02,#1cb0f6)";
+        e.target.style.color = "white";
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.transform = "scale(1)";
+        e.target.style.background =
+          "linear-gradient(135deg,#ffffff,#f3f4f6)";
+        e.target.style.color = "#111827";
       }}
     >
       {children}
